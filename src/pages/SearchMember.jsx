@@ -1,6 +1,7 @@
 import  { useState } from 'react';
 import { db } from '../firebase';
 import { collection, where, query, getDocs } from 'firebase/firestore';
+import '../styles/SearchMember.css';
 
 function SearchMember() {
   const [nfcId, setNfcId] = useState('');
@@ -23,16 +24,23 @@ function SearchMember() {
   };
 
   return (
-    <div>
-      <div>
-        <label>NFC IDで検索:</label>
-        <input value={nfcId} onChange={(e) => setNfcId(e.target.value)} />
-        <button onClick={handleSearch}>検索</button>
+    <div className="search-container">
+      <div className="search-input-container">
+        <label htmlFor="nfc-search">NFC IDで検索:</label>
+        <input
+          id="nfc-search"
+          type="text"
+          value={nfcId}
+          onChange={(e) => setNfcId(e.target.value)}
+          className="input-field"
+          placeholder="NFC IDを入力"
+        />
+        <button onClick={handleSearch} className="search-button">検索</button>
       </div>
       {number && (
-        <div>
-          <h3>会員番号: {number}</h3>
-          <button onClick={copyClipboard}>コピー</button>
+        <div className="result-container">
+          <h3 className="result-text">会員番号: {number}</h3>
+          <button onClick={copyClipboard} className="copy-button">コピー</button>
         </div>
       )}
     </div>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { db } from '../firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-
+import '../styles/RegisterNFC.css';
 
 function RegisterNFC() {
   const [nfcId, setNfcId] = useState('');
@@ -32,27 +32,35 @@ function RegisterNFC() {
   };
 
   return (
-    <>
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>NFC ID:</label>
-        <input
-          value={nfcId}
-          onChange={(e) => setNfcId(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label>会員番号:</label>
-        <input
-          value={number}
-          onChange={(e) => setNumber(e.target.value)}
-          required
-        />
-      </div>
-      <button type="submit">登録</button>
-    </form>
-    </>
+    <div className="register-container">
+      <form onSubmit={handleSubmit} className="register-form">
+        <div className="form-group">
+          <label htmlFor="nfc-id">NFC ID:</label>
+          <input
+            id="nfc-id"
+            type="text"
+            value={nfcId}
+            onChange={(e) => setNfcId(e.target.value)}
+            className="input-field"
+            required
+            placeholder="NFC IDを入力"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="member-number">会員番号:</label>
+          <input
+            id="member-number"
+            type="text"
+            value={number}
+            onChange={(e) => setNumber(e.target.value)}
+            className="input-field"
+            required
+            placeholder="会員番号を入力"
+          />
+        </div>
+        <button type="submit" className="submit-button">登録</button>
+      </form>
+    </div>
   );
 }
 

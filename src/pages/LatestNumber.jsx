@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import {collection,query,orderBy,limit,getDocs,} from 'firebase/firestore';
+import '../styles/LatestNumber.css';
 
 function GetLatestNumber() {
   const [latestNumber, setLatestNumber] = useState('');
@@ -40,9 +41,9 @@ function GetLatestNumber() {
   };
 
   return (
-    <div>
-      <h2>最新の会員番号: {latestNumber}</h2>
-      <button onClick={copyClipboard}>コピー</button>
+    <div className="latest-container">
+      <h2 className="latest-title">最新の会員番号: {latestNumber}</h2>
+      <button onClick={copyClipboard} className="copy-button">コピー</button>
     </div>
   );
 }
