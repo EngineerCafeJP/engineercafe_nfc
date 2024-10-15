@@ -1,11 +1,14 @@
 import  { useState } from 'react';
 import { db } from '../firebase';
+import { NFC } from '../nfc';
 import { collection, where, query, getDocs } from 'firebase/firestore';
 import '../styles/SearchMember.css';
 
 function SearchMember() {
   const [nfcId, setNfcId] = useState('');
   const [number, setNumber] = useState('');
+
+  const nfc = new NFC();
 
   const handleSearch = async () => {
     const q = query(collection(db, 'nfc'), where('nfc_id', '==', nfcId));
@@ -23,8 +26,35 @@ function SearchMember() {
     alert('クリップボードにコピーしました');
   };
 
+  const getCardId = async () => {
+    try {
+      do {
+        const id = await nfc.session();
+        if (id) {
+          setNfcId(id);
+        }
+        await nfc.sleep(100);
+      } while (true);
+    } catch (e) {
+      console.log(e);
+      alert(e);
+      try {
+        nfc.close();
+      } catch (e) {
+        console.log(e);
+      }
+      throw e;
+    }
+  }
+
+  const connectUSBDevice = async () => {
+    await nfc.connectUSBDevice();
+    getCardId();
+  }
+
   return (
     <div className="search-container">
+      <button type="button" className="felica-button" onClick={connectUSBDevice}>FelicaReaderに接続</button>
       <div className="search-input-container">
         <label htmlFor="nfc-search">NFC IDで検索:</label>
         <input
