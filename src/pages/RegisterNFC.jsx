@@ -13,11 +13,11 @@ function RegisterNFC() {
     e.preventDefault();
 
     try {
-      const docRef = doc(db, 'nfc', number);
+      const docRef = doc(db, 'nfc', nfcId);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        alert('この会員番号は既に登録されています');
+        alert('このカードは既に登録されています');
       } else {
         await setDoc(docRef, {
           nfc_id: nfcId,
