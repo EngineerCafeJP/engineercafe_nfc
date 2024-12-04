@@ -115,9 +115,11 @@ function RegisterNFC() {
             placeholder="会員番号を入力"
           />
         </div>
-        <button type="submit" onClick={handleRegisterClick} className="submit-button">新規登録</button>
-        <button type="button" onClick={handleUpdateClick} className="submit-button">上書き更新</button>
-        <button onClick={handleFormClear} className="submit-button">クリア</button>
+        <div class="button-container">
+          <button type="submit" onClick={handleRegisterClick} className="submit-button">新規登録</button>
+          <button type="button" onClick={handleUpdateClick} className="submit-button">上書き更新</button>
+          <button onClick={handleFormClear} className="submit-button">クリア</button>
+        </div>
       </form>
     </div>
   );

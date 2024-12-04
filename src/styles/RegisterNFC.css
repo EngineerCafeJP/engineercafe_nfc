@@ -33,6 +33,11 @@ body {
   gap: 0.5rem;
 }
 
+.button-container {
+  display: flex; /* Flexboxを使用 */
+  gap: 10px;     /* ボタンの間隔を設定 */
+}
+
 .input-field {
   padding: 0.75rem;
   border: 1px solid #333;

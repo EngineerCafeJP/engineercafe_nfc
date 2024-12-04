@@ -42,8 +42,10 @@ function SearchMember() {
           className="input-field"
           placeholder="NFC IDを入力"
         />
-        <button onClick={handleSearch} className="search-button">検索</button>
-        <button onClick={handleFormClear} className="search-button">クリア</button>
+        <div class="button-container">
+          <button onClick={handleSearch} className="search-button">検索</button>
+          <button onClick={handleFormClear} className="search-button">クリア</button>
+        </div>
       </div>
       {number && (
         <div className="result-container">
