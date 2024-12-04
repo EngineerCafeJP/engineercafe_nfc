@@ -20,6 +20,10 @@ function SearchMember() {
     }
   };
 
+  const handleFormClear = () => {
+    setNfcId("");
+  };
+
   const copyClipboard = () => {
     navigator.clipboard.writeText(number);
     alert('クリップボードにコピーしました');
@@ -39,6 +43,7 @@ function SearchMember() {
           placeholder="NFC IDを入力"
         />
         <button onClick={handleSearch} className="search-button">検索</button>
+        <button onClick={handleFormClear} className="search-button">クリア</button>
       </div>
       {number && (
         <div className="result-container">

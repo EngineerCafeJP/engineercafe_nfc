@@ -82,6 +82,11 @@ function RegisterNFC() {
     }
   };
 
+  const handleFormClear = () => {
+    setNfcId("");
+    setNumber("");
+  };
+
   return (
     <div className="register-container">
       <h1>NFC登録・更新</h1>
@@ -112,6 +117,7 @@ function RegisterNFC() {
         </div>
         <button type="submit" onClick={handleRegisterClick} className="submit-button">新規登録</button>
         <button type="button" onClick={handleUpdateClick} className="submit-button">上書き更新</button>
+        <button onClick={handleFormClear} className="submit-button">クリア</button>
       </form>
     </div>
   );
