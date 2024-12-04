@@ -8,5 +8,10 @@
             "nfc_id": "05-06-07-",
             "number": "005678"
         }
+    },
+    "conters": {
+        "member_number": {
+            "latest_number": "001235"
+        }
     }
 }
