@@ -25,12 +25,11 @@ function RegisterNFC() {
     if (!isConfirmed) return;
 
     try {
-      // nfc_idがすでに存在していないかを確認
-      const q = query(collection(db, 'nfc'), where('nfc_id', '==', nfcId));
-      const querySnapshot = await getDocs(q);
+      const docRef = doc(db, 'nfc', nfcId);
+      const docSnap = await getDoc(docRef);
 
-      if (!querySnapshot.empty) {
-        alert('このNFC IDはすでに登録されています');
+      if (docSnap.exists()) {
+        alert('このカードは既に登録されています');
       } else {
         // 新規登録
         const docRef = doc(db, 'nfc', number);

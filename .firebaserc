@@ -1,0 +1,16 @@
+{
+  "projects": {
+    "default": "engineercafe-cc005"
+  },
+  "targets": {
+    "engineercafe-cc005": {
+      "hosting": {
+        "engineercafe-nfc": [
+          "engineercafe-nfc"
+        ]
+      }
+    }
+  },
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
+}
