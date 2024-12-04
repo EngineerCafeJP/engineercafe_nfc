@@ -27,6 +27,7 @@ function SearchMember() {
 
   return (
     <div className="search-container">
+      <h1>会員番号検索</h1>
       <div className="search-input-container">
         <label htmlFor="nfc-search">NFC IDで検索:</label>
         <input

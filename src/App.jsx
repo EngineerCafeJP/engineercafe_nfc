@@ -12,9 +12,6 @@ export const App = () => {
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/search" element={<Search />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/latest" element={<Latest />} />
                 </Routes>
             </BrowserRouter>
         </NfcProvider>
