@@ -15,20 +15,39 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.latest-title {
-  font-size: 2rem;
-  color: #000;
-  margin-bottom: 1.5rem;
+.number-display {
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
-.copy-button {
+.number-title {
+  font-size: 1.5rem;
+  color: #000;
+  margin-bottom: 1rem;
+}
+
+.number-value-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.number-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #000;
+  font-family: monospace;
+}
+
+.copy-button, .increment-button {
   padding: 0.75rem 1.5rem;
   background-color: #000;
   color: #fff;
@@ -38,6 +57,17 @@ body {
   transition: background-color 0.3s;
 }
 
-.copy-button:hover {
+.copy-button:hover:not(:disabled),
+.increment-button:hover:not(:disabled) {
   background-color: #444;
+}
+
+.copy-button:disabled,
+.increment-button:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+.increment-button {
+  min-width: 200px;
 }
