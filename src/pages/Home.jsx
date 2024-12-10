@@ -13,6 +13,7 @@ export const Home = () => {
     const getCardId = async () => {
         try {
           do {
+            await nfc.connectUSBDevice();
             const id = await nfc.session();
             if (id) {
               setNfcId(id);

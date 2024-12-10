@@ -24,7 +24,11 @@ function RegisterNFC() {
       `以下の内容で新規登録を行います：\n\nNFC ID: ${nfcId}\n会員番号: ${number}\n\nよろしいですか？`
     );
 
-    if (!isConfirmed) return;
+    if (!isConfirmed) {
+      await nfc.connectUSBDevice();
+      await nfc.session();
+      return;
+    }
 
     try {
       const docRef = doc(db, 'nfc', nfcId);
@@ -34,7 +38,7 @@ function RegisterNFC() {
         alert('このカードは既に登録されています');
       } else {
         // 新規登録
-        const docRef = doc(db, 'nfc', number);
+        const docRef = doc(db, 'nfc', nfcId);
         await setDoc(docRef, { nfc_id: nfcId, number });
         alert('新しいNFC情報を登録しました');
         setNfcId('');
@@ -43,6 +47,8 @@ function RegisterNFC() {
     } catch (error) {
       console.error('エラーが発生しました: ', error);
       alert(`登録中にエラーが発生しました: ${error.message}`);
+      await nfc.connectUSBDevice();
+      await nfc.session();  
     } finally {
       await nfc.connectUSBDevice();
       await nfc.session();
@@ -64,7 +70,11 @@ function RegisterNFC() {
       `以下の内容で既存のデータを上書きします：\n\nNFC ID: ${nfcId}\n会員番号: ${number}\n\nこの操作は取り消せません。よろしいですか？`
     );
 
-    if (!isConfirmed) return;
+    if (!isConfirmed) {
+      await nfc.connectUSBDevice();
+      await nfc.session();  
+      return;
+    }
 
     try {
       // nfc_id でデータを検索

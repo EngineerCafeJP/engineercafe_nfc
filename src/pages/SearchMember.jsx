@@ -18,7 +18,9 @@ function SearchMember() {
       copyClipboard();
     } else {
       alert('会員が見つかりません');
-    }
+      await nfc.connectUSBDevice();
+      await nfc.session();
+      }
     await nfc.connectUSBDevice();
     await nfc.session();
   };
