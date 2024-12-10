@@ -8,7 +8,7 @@ import { NfcContext } from '../contexts/NfcContext.jsx';
 
 export const Home = () => {
 
-    const { nfcId, setNfcId } = useContext(NfcContext);
+    const { nfcId, setNfcId, nfc } = useContext(NfcContext);
     
     const getCardId = async () => {
         try {
@@ -35,8 +35,6 @@ export const Home = () => {
         await nfc.connectUSBDevice();
         getCardId();
     }
-
-    let nfc = new NFC();
 
     return (
         <div className="home-container">

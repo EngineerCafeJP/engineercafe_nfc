@@ -7,7 +7,7 @@ import '../styles/SearchMember.css';
 function SearchMember() {
   const [number, setNumber] = useState('');
 
-  const { nfcId, setNfcId } = useContext(NfcContext);
+  const { nfcId, setNfcId, nfc } = useContext(NfcContext);
 
   const handleSearch = async () => {
     const q = query(collection(db, 'nfc'), where('nfc_id', '==', nfcId));
@@ -15,9 +15,12 @@ function SearchMember() {
     if (!querySnapshot.empty) {
       const doc = querySnapshot.docs[0];
       setNumber(doc.data().number);
+      copyClipboard();
     } else {
       alert('会員が見つかりません');
     }
+    await nfc.connectUSBDevice();
+    await nfc.session();
   };
 
   const handleFormClear = () => {
@@ -25,6 +28,7 @@ function SearchMember() {
   };
 
   const copyClipboard = () => {
+    document.body.focus();
     navigator.clipboard.writeText(number);
     alert('クリップボードにコピーしました');
   };

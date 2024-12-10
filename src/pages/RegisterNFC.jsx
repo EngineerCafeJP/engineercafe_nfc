@@ -1,12 +1,12 @@
 import { useState, useContext } from 'react';
 import { db } from '../firebase';
-import { doc, setDoc, query, where, collection, getDocs } from 'firebase/firestore';
+import { doc, setDoc, query, where, collection, getDoc, getDocs } from 'firebase/firestore';
 import { NfcContext } from '../contexts/NfcContext.jsx';
 import '../styles/RegisterNFC.css';
 
 function RegisterNFC() {
   const [number, setNumber] = useState('');
-  const { nfcId, setNfcId } = useContext(NfcContext);
+  const { nfcId, setNfcId, nfc } = useContext(NfcContext);
 
   // 新規データ登録関数
   const handleRegisterClick = async (e) => {
@@ -14,6 +14,8 @@ function RegisterNFC() {
 
     if (!number.trim() || !nfcId.trim()) {
       alert('NFC ID または会員番号が無効です');
+      await nfc.connectUSBDevice();
+      await nfc.session();
       return;
     }
 
@@ -41,6 +43,9 @@ function RegisterNFC() {
     } catch (error) {
       console.error('エラーが発生しました: ', error);
       alert(`登録中にエラーが発生しました: ${error.message}`);
+    } finally {
+      await nfc.connectUSBDevice();
+      await nfc.session();
     }
   };
 
@@ -49,6 +54,8 @@ function RegisterNFC() {
 
     if (!number.trim() || !nfcId.trim()) {
       alert('NFC ID または会員番号が無効です');
+      await nfc.connectUSBDevice();
+      await nfc.session();
       return;
     }
 
@@ -79,6 +86,9 @@ function RegisterNFC() {
     } catch (error) {
       console.error('エラーが発生しました: ', error);
       alert(`上書き中にエラーが発生しました: ${error.message}`);
+    } finally {
+      await nfc.connectUSBDevice();
+      await nfc.session();
     }
   };
 
