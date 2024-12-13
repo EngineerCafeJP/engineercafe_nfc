@@ -1,5 +1,5 @@
 {
-  "packages": ["nodejs@22","firebase-tools@latest","jdk22@latest"],
+  "packages": ["nodejs@22", "firebase-tools@latest", "jdk22@latest"],
   "env": {
     "DEVBOX_COREPACK_ENABLED": "true"
   }

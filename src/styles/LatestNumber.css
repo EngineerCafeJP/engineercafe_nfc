@@ -48,7 +48,8 @@ body {
   font-family: monospace;
 }
 
-.copy-button, .increment-button {
+.copy-button,
+.increment-button {
   padding: 0.75rem 1.5rem;
   background-color: #000;
   color: #fff;

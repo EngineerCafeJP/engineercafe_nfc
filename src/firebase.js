@@ -1,5 +1,5 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { initializeApp } from "firebase/app";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_APIKEY,
@@ -8,7 +8,7 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGINGSENDERID,
   appId: import.meta.env.VITE_FIREBASE_APPID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENTID
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENTID,
 };
 
 const app = initializeApp(firebaseConfig);
@@ -16,8 +16,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 if (import.meta.env.DEV) {
-  const emulatorHost = import.meta.env.VITE_FIRESTORE_EMULATOR_HOST ;
-  const emulatorPort = import.meta.env.VITE_FIRESTORE_EMULATOR_PORT ;
+  const emulatorHost = import.meta.env.VITE_FIRESTORE_EMULATOR_HOST;
+  const emulatorPort = import.meta.env.VITE_FIRESTORE_EMULATOR_PORT;
   connectFirestoreEmulator(db, emulatorHost, emulatorPort);
 }
 

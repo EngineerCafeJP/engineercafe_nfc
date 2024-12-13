@@ -1,6 +1,14 @@
 import { useState, useContext } from "react";
 import { db } from "../firebase";
-import { doc, setDoc, query, where, collection, getDoc, getDocs } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  query,
+  where,
+  collection,
+  getDoc,
+  getDocs,
+} from "firebase/firestore";
 import { NfcContext } from "../contexts/NfcContext.jsx";
 import "../styles/RegisterNFC.css";
 
@@ -21,7 +29,7 @@ function RegisterNFC() {
 
     // 確認ダイアログを表示
     const isConfirmed = window.confirm(
-      `以下の内容で新規登録を行います：\n\nNFC ID: ${nfcId}\n会員番号: ${number}\n\nよろしいですか？`
+      `以下の内容で新規登録を行います：\n\nNFC ID: ${nfcId}\n会員番号: ${number}\n\nよろしいですか？`,
     );
 
     if (!isConfirmed) {
@@ -67,7 +75,7 @@ function RegisterNFC() {
 
     // 確認ダイアログを表示
     const isConfirmed = window.confirm(
-      `以下の内容で既存のデータを上書きします：\n\nNFC ID: ${nfcId}\n会員番号: ${number}\n\nこの操作は取り消せません。よろしいですか？`
+      `以下の内容で既存のデータを上書きします：\n\nNFC ID: ${nfcId}\n会員番号: ${number}\n\nこの操作は取り消せません。よろしいですか？`,
     );
 
     if (!isConfirmed) {
@@ -136,10 +144,18 @@ function RegisterNFC() {
           />
         </div>
         <div className="button-container">
-          <button type="submit" onClick={handleRegisterClick} className="submit-button">
+          <button
+            type="submit"
+            onClick={handleRegisterClick}
+            className="submit-button"
+          >
             新規登録
           </button>
-          <button type="button" onClick={handleUpdateClick} className="submit-button">
+          <button
+            type="button"
+            onClick={handleUpdateClick}
+            className="submit-button"
+          >
             上書き更新
           </button>
           <button onClick={handleFormClear} className="submit-button">
