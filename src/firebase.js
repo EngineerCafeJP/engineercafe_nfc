@@ -16,6 +16,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 if (import.meta.env.DEV) {
+  console.log("connecting to emulators");
   const emulatorHost = import.meta.env.VITE_FIRESTORE_EMULATOR_HOST;
   const emulatorPort = import.meta.env.VITE_FIRESTORE_EMULATOR_PORT;
   connectFirestoreEmulator(db, emulatorHost, emulatorPort);

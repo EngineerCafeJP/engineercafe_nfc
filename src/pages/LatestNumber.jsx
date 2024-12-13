@@ -1,14 +1,6 @@
 import { useState, useEffect } from "react";
 import { db } from "../firebase";
-import {
-  collection,
-  query,
-  getDocs,
-  doc,
-  documentId,
-  where,
-  runTransaction,
-} from "firebase/firestore";
+import { collection, query, getDocs, doc, documentId, where, runTransaction } from "firebase/firestore";
 import "../styles/LatestNumber.css";
 
 function GetLatestNumber() {
@@ -22,10 +14,7 @@ function GetLatestNumber() {
 
   const fetchNextNumber = async () => {
     try {
-      const q = query(
-        collection(db, "conters"),
-        where(documentId(), "==", "member_number"),
-      );
+      const q = query(collection(db, "conters"), where(documentId(), "==", "member_number"));
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
@@ -64,7 +53,7 @@ function GetLatestNumber() {
   const handleIncrementClick = () => {
     if (
       window.confirm(
-        `会員番号「${nextNumber}」をインクリメントしますか？\nインクリメント後、この番号は使用できなくなります。`,
+        `会員番号「${nextNumber}」をインクリメントしますか？\nインクリメント後、この番号は使用できなくなります。`
       )
     ) {
       incrementNumber();
@@ -113,22 +102,14 @@ function GetLatestNumber() {
           <h2 className="number-title">割り当てる会員番号:</h2>
           <div className="number-value-container">
             <span className="number-value">{nextNumber}</span>
-            <button
-              onClick={copyNumber}
-              className="copy-button"
-              disabled={!nextNumber || isLoading}
-            >
+            <button onClick={copyNumber} className="copy-button" disabled={!nextNumber || isLoading}>
               コピー
             </button>
           </div>
         </div>
       </div>
       <div className="action-container">
-        <button
-          onClick={handleIncrementClick}
-          className="increment-button"
-          disabled={isLoading}
-        >
+        <button onClick={handleIncrementClick} className="increment-button" disabled={isLoading}>
           {isLoading ? "処理中..." : "会員番号をインクリメントする"}
         </button>
       </div>
