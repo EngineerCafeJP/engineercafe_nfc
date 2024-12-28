@@ -1,13 +1,11 @@
 import { useContext } from "react";
-import Search from "./SearchMember.jsx";
-import Register from "./RegisterNFC.jsx";
-import Latest from "./LatestNumber.jsx";
-import { NFC } from "../nfc";
+import { NfcContext } from "../contexts/NfcContext";
 import "../styles/Home.css";
-import { NfcContext } from "../contexts/NfcContext.jsx";
+import Register from "./RegisterNFC";
+import Search from "./SearchMember";
 
 export const Home = () => {
-  const { nfcId, setNfcId, nfc } = useContext(NfcContext);
+  const { nfcId, setNfcId, nfc } = useContext(NfcContext)!;
 
   const getCardId = async () => {
     try {
@@ -53,4 +51,4 @@ export const Home = () => {
   );
 };
 
-export default Home;
+export default Home; 

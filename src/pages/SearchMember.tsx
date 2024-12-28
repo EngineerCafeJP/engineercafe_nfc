@@ -1,13 +1,13 @@
-import { useState, useContext } from "react";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { useContext, useState } from "react";
+import { NfcContext } from "../contexts/NfcContext";
 import { db } from "../firebase";
-import { collection, where, query, getDocs } from "firebase/firestore";
-import { NfcContext } from "../contexts/NfcContext.jsx";
 import "../styles/SearchMember.css";
 
 function SearchMember() {
   const [number, setNumber] = useState("");
 
-  const { nfcId, setNfcId, nfc } = useContext(NfcContext);
+  const { nfcId, setNfcId, nfc } = useContext(NfcContext)!;
 
   const handleSearch = async () => {
     const q = query(collection(db, "nfc"), where("nfc_id", "==", nfcId));
@@ -69,4 +69,4 @@ function SearchMember() {
   );
 }
 
-export default SearchMember;
+export default SearchMember; 

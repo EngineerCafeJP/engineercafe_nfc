@@ -1,23 +1,23 @@
-import { useState, useContext } from "react";
-import { db } from "../firebase";
 import {
-  doc,
-  setDoc,
-  query,
-  where,
-  collection,
-  getDoc,
-  getDocs,
+    collection,
+    doc,
+    getDoc,
+    getDocs,
+    query,
+    setDoc,
+    where,
 } from "firebase/firestore";
-import { NfcContext } from "../contexts/NfcContext.jsx";
+import { useContext, useState } from "react";
+import { NfcContext } from "../contexts/NfcContext";
+import { db } from "../firebase";
 import "../styles/RegisterNFC.css";
 
 function RegisterNFC() {
   const [number, setNumber] = useState("");
-  const { nfcId, setNfcId, nfc } = useContext(NfcContext);
+  const { nfcId, setNfcId, nfc } = useContext(NfcContext)!;
 
   // 新規データ登録関数
-  const handleRegisterClick = async (e) => {
+  const handleRegisterClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     if (!number.trim() || !nfcId.trim()) {
@@ -52,7 +52,7 @@ function RegisterNFC() {
         setNfcId("");
         setNumber("");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("エラーが発生しました: ", error);
       alert(`登録中にエラーが発生しました: ${error.message}`);
       await nfc.connectUSBDevice();
@@ -63,7 +63,7 @@ function RegisterNFC() {
     }
   };
 
-  const handleUpdateClick = async (e) => {
+  const handleUpdateClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     if (!number.trim() || !nfcId.trim()) {
@@ -101,7 +101,7 @@ function RegisterNFC() {
       // 入力状態をリセット
       setNfcId("");
       setNumber("");
-    } catch (error) {
+    } catch (error: any) {
       console.error("エラーが発生しました: ", error);
       alert(`上書き中にエラーが発生しました: ${error.message}`);
     } finally {
@@ -167,4 +167,4 @@ function RegisterNFC() {
   );
 }
 
-export default RegisterNFC;
+export default RegisterNFC; 

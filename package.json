@@ -24,6 +24,8 @@
     "@testing-library/user-event": "^14.5.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.18.2",
+    "@typescript-eslint/parser": "^8.18.2",
     "@vitejs/plugin-react": "^4.3.1",
     "eslint": "^9.9.0",
     "eslint-plugin-react": "^7.35.0",
@@ -32,6 +34,7 @@
     "globals": "^15.9.0",
     "jsdom": "^25.0.1",
     "prettier": "3.4.2",
+    "typescript": "^5.7.2",
     "vite": "^5.4.1",
     "vitest": "^2.1.8"
   },

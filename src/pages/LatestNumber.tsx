@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
+import { collection, doc, documentId, getDocs, query, runTransaction, where } from "firebase/firestore";
+import { useEffect, useState } from "react";
 import { db } from "../firebase";
-import { collection, query, getDocs, doc, documentId, where, runTransaction } from "firebase/firestore";
 import "../styles/LatestNumber.css";
 
 function GetLatestNumber() {
   const [nextNumber, setNextNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const getNextNumber = (currentNumber) => {
+  const getNextNumber = (currentNumber: string) => {
     const numericPart = parseInt(currentNumber, 10);
     return (numericPart + 1).toString().padStart(6, "0");
   };
@@ -117,4 +117,4 @@ function GetLatestNumber() {
   );
 }
 
-export default GetLatestNumber;
+export default GetLatestNumber; 

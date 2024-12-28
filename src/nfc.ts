@@ -1,21 +1,22 @@
+  // Start of Selection
 class NFC {
-  constructor(debug = false) {
-    this.device = null;
-    this.deviceEp = {
-      in: 0,
-      out: 0,
-    };
-    this.seqNumber = 0;
+  private device: any = null;
+  private deviceEp: { in: number; out: number } = { in: 0, out: 0 };
+  private seqNumber: number = 0;
+  private cL: (...args: any[]) => void;
+
+  constructor(debug: boolean = false) {
     this.cL = () => {};
     if (debug === true) {
       this.cL = console.log; // for Debug code
     }
   }
-  async sleep(msec) {
+
+  async sleep(msec: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, msec));
   }
 
-  async send(data) {
+  async send(data: number[]): Promise<void> {
     let argData = new Uint8Array(data);
     const dataLen = argData.length;
     const SLOTNUMBER = 0x00;
@@ -32,17 +33,16 @@ class NFC {
     0 != dataLen && retVal.set(argData, 10); // コマンド追加
     this.cL(">>>>>>>>>>");
     this.cL(Array.from(retVal).map((v) => v.toString(16)));
-    const out = await this.device.transferOut(this.deviceEp.out, retVal);
+    const out = await this.device!.transferOut(this.deviceEp.out, retVal);
     await this.sleep(50);
   }
 
-  async receive(len) {
+  async receive(len: number): Promise<number[]> {
     this.cL("<<<<<<<<<<" + len);
-    let data = await this.device.transferIn(this.deviceEp.in, len);
-    // this.cL(data);
+    let data = await this.device!.transferIn(this.deviceEp.in, len);
     await this.sleep(10);
-    let arr = [];
-    let arr_str = [];
+    let arr: number[] = [];
+    let arr_str: string[] = [];
     for (let i = data.data.byteOffset; i < data.data.byteLength; i++) {
       arr.push(data.data.getUint8(i));
       arr_str.push(this.dec2HexString(data.data.getUint8(i)));
@@ -51,31 +51,24 @@ class NFC {
     return arr;
   }
 
-  async session() {
+  async session(): Promise<string | undefined> {
     const len = 50;
-    // firmware version
     await this.send([0xff, 0x56, 0x00, 0x00]);
     await this.receive(len);
-    // endtransparent
     await this.send([0xff, 0x50, 0x00, 0x00, 0x02, 0x82, 0x00, 0x00]);
     await this.receive(len);
-    // startransparent
     await this.send([0xff, 0x50, 0x00, 0x00, 0x02, 0x81, 0x00, 0x00]);
     await this.receive(len);
-    // rf off
     await this.send([0xff, 0x50, 0x00, 0x00, 0x02, 0x83, 0x00, 0x00]);
     await this.receive(len);
-    // rf on
     await this.send([0xff, 0x50, 0x00, 0x00, 0x02, 0x84, 0x00, 0x00]);
     await this.receive(len);
 
-    // SwitchProtocolTypeF
     await this.send([
       0xff, 0x50, 0x00, 0x02, 0x04, 0x8f, 0x02, 0x03, 0x00, 0x00,
     ]);
     await this.receive(len);
 
-    // ferica poling
     await this.send([
       0xff, 0x50, 0x00, 0x01, 0x00, 0x00, 0x11, 0x5f, 0x46, 0x04, 0xa0, 0x86,
       0x01, 0x00, 0x95, 0x82, 0x00, 0x06, 0x06, 0x00, 0xff, 0xff, 0x01, 0x00,
@@ -87,12 +80,10 @@ class NFC {
       const idmStr = idm.join("");
       return idmStr;
     }
-    // SwitchProtocolTypeA
     await this.send([
       0xff, 0x50, 0x00, 0x02, 0x04, 0x8f, 0x02, 0x00, 0x03, 0x00,
     ]);
     await this.receive(len);
-    // GET Card UID
     await this.send([0xff, 0xca, 0x00, 0x00]);
 
     const poling_res_a = await this.receive(len);
@@ -104,7 +95,7 @@ class NFC {
     }
   }
 
-  async connectUSBDevice() {
+  async connectUSBDevice(): Promise<void> {
     const deviceFilters = [
       {
         vendorId: 0x054c,
@@ -117,16 +108,14 @@ class NFC {
     ];
     try {
       this.cL(navigator);
-      // ペアリング済みの対応デバイスが1つだったら、自動選択にする
-      let pearedDevices = await navigator.usb.getDevices();
-      pearedDevices = pearedDevices.filter((d) =>
+      let pairedDevices = await (navigator as any).usb.getDevices();
+      pairedDevices = pairedDevices.filter((d: any) =>
         deviceFilters.map((p) => p.productId).includes(d.productId),
       );
-      // 自動選択 or 選択画面
       this.device =
-        pearedDevices.length == 1
-          ? pearedDevices[0]
-          : await navigator.usb.requestDevice({ filters: deviceFilters });
+        pairedDevices.length == 1
+          ? pairedDevices[0]
+          : await (navigator as any).usb.requestDevice({ filters: deviceFilters });
       this.cL("open");
       await this.device.open();
       this.cL(this.device);
@@ -135,15 +124,15 @@ class NFC {
       this.cL("this.cLaimInterface");
       this.cL(this.device);
       const deviceInterface = this.device.configuration.interfaces.filter(
-        (v) => v.alternate.interfaceClass == 255,
+        (v: { alternate: { interfaceClass: number; }; }) => v.alternate.interfaceClass == 255,
       )[0];
       await this.device.claimInterface(deviceInterface.interfaceNumber);
       this.deviceEp = {
         in: deviceInterface.alternate.endpoints.filter(
-          (e) => e.direction == "in",
+          (e: { direction: string; }) => e.direction == "in",
         )[0].endpointNumber,
         out: deviceInterface.alternate.endpoints.filter(
-          (e) => e.direction == "out",
+          (e: { direction: string; }) => e.direction == "out",
         )[0].endpointNumber,
       };
     } catch (e) {
@@ -152,13 +141,16 @@ class NFC {
       throw e;
     }
   }
-  close() {
-    this.device.close();
+
+  close(): void {
+    this.device?.close();
   }
-  padding_zero(num, p) {
+
+  padding_zero(num: string, p: number): string {
     return ("0".repeat(p * 1) + num).slice(-(p * 1));
   }
-  dec2HexString(n) {
+
+  dec2HexString(n: number): string {
     return this.padding_zero((n * 1).toString(16).toUpperCase(), 2);
   }
 }
