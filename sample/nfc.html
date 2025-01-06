@@ -1,187 +1,231 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NFC Type Detection</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <h1>NFC Type Detection with Web USB API</h1>
     <button id="connectBtn">Connect to NFC Device</button>
     <pre id="message-title"></pre>
     <pre id="message"></pre>
 
     <script>
+      let messageTitle = document.querySelector("#message-title");
+      let message = document.querySelector("#message");
+      let exe = document.querySelector("#connectBtn");
+      let usbDevice = "";
+      let usbConfiguration = {};
 
-        let messageTitle = document.querySelector('#message-title');
-        let message = document.querySelector('#message');
-        let exe = document.querySelector('#connectBtn');
-        let usbDevice = '';
-        let usbConfiguration = {};
+      const DeviceFilter = [
+        { vendorId: 1356, productId: 3528 }, // SONY PaSoRi RC-S300/S
+        { vendorId: 1356, productId: 3529 }, // SONY PaSoRi RC-S300/P
+      ];
 
-        const DeviceFilter = [
-            { vendorId: 1356, productId: 3528 },	// SONY PaSoRi RC-S300/S
-            { vendorId: 1356, productId: 3529 },	// SONY PaSoRi RC-S300/P
-        ];
+      exe.addEventListener("click", async () => {
+        await usbDeviceConnect();
+        console.log(usbDevice, usbConfiguration);
+        await usbDeviceOpen();
+        await usbDeviceClose();
+        return;
+      });
 
-        exe.addEventListener('click', async () => {
-            await usbDeviceConnect();
-            console.log(usbDevice, usbConfiguration);
-            await usbDeviceOpen();
-            await usbDeviceClose();
-            return;
-        });
-
-        //	USB デバイスコネクト
-        var usbDeviceConnect = async () => {
-            const ud = await navigator.usb.getDevices();						// ペアリング設定済みデバイスのUSBDeviceインスタンス取得
-            let peared = 0;
-            if (ud.length > 0) {
-                for (let dev of ud) {
-                    const td = DeviceFilter.find((fildev) => dev.vendorId == fildev.vendorId && dev.productId == fildev.productId);
-                    if (td !== undefined) {
-                        ++peared;
-                        usbDevice = dev;
-                    }
-                }
+      //	USB デバイスコネクト
+      var usbDeviceConnect = async () => {
+        const ud = await navigator.usb.getDevices(); // ペアリング設定済みデバイスのUSBDeviceインスタンス取得
+        let peared = 0;
+        if (ud.length > 0) {
+          for (let dev of ud) {
+            const td = DeviceFilter.find(
+              (fildev) =>
+                dev.vendorId == fildev.vendorId &&
+                dev.productId == fildev.productId,
+            );
+            if (td !== undefined) {
+              ++peared;
+              usbDevice = dev;
             }
-            if (peared != 1) {
-                usbDevice = await navigator.usb.requestDevice({ filters: DeviceFilter });	// USB機器をペアリングフローから選択しデバイスのUSBDeviceインスタンス取得
-            }
-
-            usbConfiguration.confValue = usbDevice.configuration.configurationValue;
-            usbConfiguration.interfaceNum = usbDevice.configuration.interfaces[usbConfiguration.confValue].interfaceNumber;	// インターフェイス番号
-            let ep = getEndPoint(usbDevice.configuration.interfaces[usbConfiguration.confValue], 'in');	// 入力エンドポイントを求める
-            usbConfiguration.endPointInNum = ep.endpointNumber;												// 入力エンドポイント
-            usbConfiguration.endPointInPacketSize = ep.packetSize;												// 入力パケットサイズ
-            ep = getEndPoint(usbDevice.configuration.interfaces[usbConfiguration.confValue], 'out');		// 出力エンドポイントを求める
-            usbConfiguration.endPointOutNum = ep.endpointNumber;												// 出力エンドポイント
-            usbConfiguration.endPointOutPacketSize = ep.packetSize;											// 出力パケットサイズ
-
-            return;
+          }
+        }
+        if (peared != 1) {
+          usbDevice = await navigator.usb.requestDevice({
+            filters: DeviceFilter,
+          }); // USB機器をペアリングフローから選択しデバイスのUSBDeviceインスタンス取得
         }
 
-        //	USB デバイスオープン
-        var usbDeviceOpen = async () => {
-            await usbDevice.open();		// USBデバイスセッション開始
-            await usbDevice.selectConfiguration(usbConfiguration.confValue);		// USBデバイスの構成を選択
-            await usbDevice.claimInterface(usbConfiguration.interfaceNum);		// USBデバイスの指定インターフェイスを排他アクセスにする
+        usbConfiguration.confValue = usbDevice.configuration.configurationValue;
+        usbConfiguration.interfaceNum =
+          usbDevice.configuration.interfaces[
+            usbConfiguration.confValue
+          ].interfaceNumber; // インターフェイス番号
+        let ep = getEndPoint(
+          usbDevice.configuration.interfaces[usbConfiguration.confValue],
+          "in",
+        ); // 入力エンドポイントを求める
+        usbConfiguration.endPointInNum = ep.endpointNumber; // 入力エンドポイント
+        usbConfiguration.endPointInPacketSize = ep.packetSize; // 入力パケットサイズ
+        ep = getEndPoint(
+          usbDevice.configuration.interfaces[usbConfiguration.confValue],
+          "out",
+        ); // 出力エンドポイントを求める
+        usbConfiguration.endPointOutNum = ep.endpointNumber; // 出力エンドポイント
+        usbConfiguration.endPointOutPacketSize = ep.packetSize; // 出力パケットサイズ
 
-            const endTransparent = new Uint8Array([0x6B, 0x08, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0xFF, 0x50, 0x00, 0x00, 0x02, 0x82, 0x00, 0x00]);
-            const startransparent = new Uint8Array([0x6B, 0x08, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0xFF, 0x50, 0x00, 0x00, 0x02, 0x81, 0x00, 0x00]);
-            const turnOff = new Uint8Array([0x6B, 0x08, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0xFF, 0x50, 0x00, 0x00, 0x02, 0x83, 0x00, 0x00]);
-            const turnOn = new Uint8Array([0x6B, 0x08, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0xFF, 0x50, 0x00, 0x00, 0x02, 0x84, 0x00, 0x00]);
+        return;
+      };
 
-            let res;
+      //	USB デバイスオープン
+      var usbDeviceOpen = async () => {
+        await usbDevice.open(); // USBデバイスセッション開始
+        await usbDevice.selectConfiguration(usbConfiguration.confValue); // USBデバイスの構成を選択
+        await usbDevice.claimInterface(usbConfiguration.interfaceNum); // USBデバイスの指定インターフェイスを排他アクセスにする
 
-            await sendUSB(endTransparent, 'End Transeparent Session');
-            res = await recvUSB(64);
+        const endTransparent = new Uint8Array([
+          0x6b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0xff,
+          0x50, 0x00, 0x00, 0x02, 0x82, 0x00, 0x00,
+        ]);
+        const startransparent = new Uint8Array([
+          0x6b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0xff,
+          0x50, 0x00, 0x00, 0x02, 0x81, 0x00, 0x00,
+        ]);
+        const turnOff = new Uint8Array([
+          0x6b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0xff,
+          0x50, 0x00, 0x00, 0x02, 0x83, 0x00, 0x00,
+        ]);
+        const turnOn = new Uint8Array([
+          0x6b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0xff,
+          0x50, 0x00, 0x00, 0x02, 0x84, 0x00, 0x00,
+        ]);
 
-            await sendUSB(startransparent, 'Start Transeparent Session');
-            res = await recvUSB(64);
+        let res;
 
-            await sendUSB(turnOff, 'Turn Off RF');
-            await sleep(50);
-            res = await recvUSB(64);
-            await sleep(50);
+        await sendUSB(endTransparent, "End Transeparent Session");
+        res = await recvUSB(64);
 
-            await sendUSB(turnOn, 'Turn On RF');
-            await sleep(50);
-            res = await recvUSB(64);
-            await sleep(50);
-            return;
+        await sendUSB(startransparent, "Start Transeparent Session");
+        res = await recvUSB(64);
+
+        await sendUSB(turnOff, "Turn Off RF");
+        await sleep(50);
+        res = await recvUSB(64);
+        await sleep(50);
+
+        await sendUSB(turnOn, "Turn On RF");
+        await sleep(50);
+        res = await recvUSB(64);
+        await sleep(50);
+        return;
+      };
+
+      //	USB デバイスクローズ
+      var usbDeviceClose = async () => {
+        await usbDevice.releaseInterface(usbConfiguration.interfaceNum); // USBデバイスの指定インターフェイスを排他アクセスを解放する
+        await usbDevice.close(); // USBデバイスセッション終了
+
+        return;
+      };
+
+      //	USBデバイス Endpoint の取得
+      var getEndPoint = (argInterface, argVal) => {
+        let retVal = false;
+        for (const val of argInterface.alternate.endpoints) {
+          if (val.direction == argVal) {
+            retVal = val;
+          }
         }
+        return retVal;
+      };
+      //	USBデバイスへデータを渡す
+      var sendUSB = async (argData, argProc = "") => {
+        await usbDevice.transferOut(usbConfiguration.endPointOutNum, argData);
+        const dataStr = arrayToHex(argData);
+        console.log(dataStr);
+        message.innerHTML +=
+          "SEND (" +
+          argProc +
+          ")<br/>&nbsp;&nbsp;&nbsp;--> [ " +
+          dataStr +
+          "]<br/>";
+      };
+      //	USBデバイスからデータを受け取る
+      var recvUSB = async (argLength) => {
+        const res = await usbDevice.transferIn(
+          usbConfiguration.endPointInNum,
+          argLength,
+        );
+        const resStr = binArrayToHex(res.data);
+        console.log(res);
+        message.innerHTML +=
+          "RECV Status[" +
+          res.status +
+          "]<br/>&nbsp;&nbsp;&nbsp;<-- [ " +
+          resStr +
+          "]<br/>";
 
-        //	USB デバイスクローズ
-        var usbDeviceClose = async () => {
-            await usbDevice.releaseInterface(usbConfiguration.interfaceNum);		// USBデバイスの指定インターフェイスを排他アクセスを解放する
-            await usbDevice.close();		// USBデバイスセッション終了
-
-            return;
+        return res;
+      };
+      //	Dataviewから配列への変換
+      var dataviewToArray = (argData) => {
+        let retVal = new Array(argData.byteLength);
+        for (let i = 0; i < argData.byteLength; ++i) {
+          retVal[i] = argData.getUint8(i);
         }
+        return retVal;
+      };
 
-        //	USBデバイス Endpoint の取得
-        var getEndPoint = (argInterface, argVal) => {
-            let retVal = false;
-            for (const val of argInterface.alternate.endpoints) {
-                if (val.direction == argVal) { retVal = val; }
-            }
-            return retVal;
+      //	DataViewの8ビットバイナリを16進数で返します。
+      var binArrayToHex = (argData) => {
+        let retVal = "";
+        let temp = [];
+        for (let idx = 0; idx < argData.byteLength; idx++) {
+          let bt = argData.getUint8(idx);
+          let str = bt.toString(16);
+          str = bt < 0x10 ? "0" + str : str;
+          retVal += str.toUpperCase() + " ";
         }
-        //	USBデバイスへデータを渡す
-        var sendUSB = async (argData, argProc = '') => {
-            await usbDevice.transferOut(usbConfiguration.endPointOutNum, argData);
-            const dataStr = arrayToHex(argData);
-            console.log(dataStr);
-            message.innerHTML += 'SEND (' + argProc + ')<br/>&nbsp;&nbsp;&nbsp;--> [ ' + dataStr + ']<br/>';
-        }
-        //	USBデバイスからデータを受け取る
-        var recvUSB = async (argLength) => {
-            const res = await usbDevice.transferIn(usbConfiguration.endPointInNum, argLength);
-            const resStr = binArrayToHex(res.data);
-            console.log(res);
-            message.innerHTML += 'RECV Status[' + res.status + ']<br/>&nbsp;&nbsp;&nbsp;<-- [ ' + resStr + ']<br/>';
+        return retVal;
+      };
 
-            return res;
+      //	配列の要素を16進数で返します。
+      var arrayToHex = (argData) => {
+        let retVal = "";
+        let temp = [];
+        for (let val of argData) {
+          let str = val.toString(16);
+          str = val < 0x10 ? "0" + str : str;
+          retVal += str.toUpperCase() + " ";
         }
-        //	Dataviewから配列への変換
-        var dataviewToArray = (argData) => {
-            let retVal = new Array(argData.byteLength);
-            for (let i = 0; i < argData.byteLength; ++i) {
-                retVal[i] = argData.getUint8(i);
-            }
-            return retVal;
+        return retVal;
+      };
+
+      //	スリープ
+      var sleep = async (msec) => {
+        return new Promise((resolve) => setTimeout(resolve, msec));
+      };
+
+      async function getNfcType(device) {
+        const command = new Uint8Array([0x00, 0x00]); // NFCデバイスに送信するコマンドをここに設定
+        const result = await device.transferOut(1, command);
+
+        // 応答を待つ
+        const response = await device.transferIn(1, 64);
+        const nfcType = response.data.getUint8(0); // 応答の解析（適宜調整）
+
+        switch (nfcType) {
+          case 0x01:
+            return "NFC Type 1";
+          case 0x02:
+            return "NFC Type 2";
+          case 0x03:
+            return "NFC Type 3";
+          case 0x04:
+            return "NFC Type 4";
+          default:
+            return "Unknown NFC Type";
         }
-
-        //	DataViewの8ビットバイナリを16進数で返します。
-        var binArrayToHex = (argData) => {
-            let retVal = '';
-            let temp = [];
-            for (let idx = 0; idx < argData.byteLength; idx++) {
-                let bt = argData.getUint8(idx);
-                let str = bt.toString(16);
-                str = bt < 0x10 ? '0' + str : str;
-                retVal += str.toUpperCase() + ' ';
-            }
-            return retVal;
-        }
-
-        //	配列の要素を16進数で返します。
-        var arrayToHex = (argData) => {
-            let retVal = '';
-            let temp = [];
-            for (let val of argData) {
-                let str = val.toString(16);
-                str = val < 0x10 ? '0' + str : str;
-                retVal += str.toUpperCase() + ' ';
-            }
-            return retVal;
-        }
-
-        //	スリープ
-        var sleep = async (msec) => {
-            return new Promise(resolve => setTimeout(resolve, msec));
-        }
-
-        async function getNfcType(device) {
-            const command = new Uint8Array([0x00, 0x00]); // NFCデバイスに送信するコマンドをここに設定
-            const result = await device.transferOut(1, command);
-
-            // 応答を待つ
-            const response = await device.transferIn(1, 64);
-            const nfcType = response.data.getUint8(0); // 応答の解析（適宜調整）
-
-            switch (nfcType) {
-                case 0x01: return 'NFC Type 1';
-                case 0x02: return 'NFC Type 2';
-                case 0x03: return 'NFC Type 3';
-                case 0x04: return 'NFC Type 4';
-                default: return 'Unknown NFC Type';
-            }
-        }
+      }
     </script>
-</body>
-
+  </body>
 </html>
