@@ -38,7 +38,7 @@ firebase emulators:start  --project demo-nfc
 
 一度サンプルにあるFfirestore.jsonをエミュレーターにデータを書き込む
 もう一度立ち上げる時のためにデータをエキスポートしておく。
-（エミュレーターのプロジェクトにdataフォルダを作成してそこにエクスポートする）
+（エミュレーターのプロジェクトにdataフォルダを作成してそこにエクスポートする
 
 ```bash
 
@@ -49,4 +49,10 @@ firebase emulators:export ./data --project demo-nfc
 
 ```bash
 firebase emulators:start --import=./data --project demo-nfc
+```
+
+### デプロイ
+
+```bash
+firebase deploy --only functions
 ```
