@@ -15,7 +15,7 @@ function SearchMember() {
     if (!querySnapshot.empty) {
       const doc = querySnapshot.docs[0];
       setNumber(doc.data().number);
-      await copyClipboard();
+      await copyClipboard(doc.data().number);
     } else {
       alert("会員が見つかりません");
       await nfc.connectUSBDevice();
@@ -29,11 +29,14 @@ function SearchMember() {
     setNfcId("");
   };
 
-  const copyClipboard = async () => {
-    document.body.focus();
-    console.log(number);
-    await navigator.clipboard.writeText(number);
-    alert('クリップボードにコピーしました');
+  const copyClipboard = async (numberToCopy: string) => {
+    try {
+      await navigator.clipboard.writeText(String(numberToCopy));
+      alert("クリップボードにコピーしました: " + numberToCopy);
+    } catch (err) {
+      console.error("クリップボードへのコピーに失敗しました", err);
+      alert("クリップボードにコピーできませんでした");
+    }
   };
 
   return (
@@ -61,7 +64,7 @@ function SearchMember() {
       {number && (
         <div className="result-container">
           <h3 className="result-text">会員番号: {number}</h3>
-          <button onClick={copyClipboard} className="copy-button">
+          <button onClick={() => copyClipboard(number)} className="copy-button">
             コピー
           </button>
         </div>
