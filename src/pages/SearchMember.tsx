@@ -15,7 +15,7 @@ function SearchMember() {
     if (!querySnapshot.empty) {
       const doc = querySnapshot.docs[0];
       setNumber(doc.data().number);
-      copyClipboard();
+      await copyClipboard();
     } else {
       alert("会員が見つかりません");
       await nfc.connectUSBDevice();
@@ -29,15 +29,16 @@ function SearchMember() {
     setNfcId("");
   };
 
-  const copyClipboard = () => {
+  const copyClipboard = async () => {
     document.body.focus();
-    navigator.clipboard.writeText(number);
-    alert("クリップボードにコピーしました");
+    console.log(number);
+    await navigator.clipboard.writeText(number);
+    alert('クリップボードにコピーしました');
   };
 
   return (
     <div className="search-container">
-      <h1>会員番号検索</h1>
+      <h2>会員番号検索</h2>
       <div className="search-input-container">
         <label htmlFor="nfc-search">NFC IDで検索:</label>
         <input

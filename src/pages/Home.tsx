@@ -3,6 +3,7 @@ import { NfcContext } from "../contexts/NfcContext";
 import "../styles/Home.css";
 import Register from "./RegisterNFC";
 import Search from "./SearchMember";
+import Latest from "./LatestNumber";
 
 export const Home = () => {
   const { nfcId, setNfcId, nfc } = useContext(NfcContext)!;
@@ -46,7 +47,7 @@ export const Home = () => {
       </button>
       <Search />
       <Register />
-      {/* <Latest /> */}
+      <Latest />
     </div>
   );
 };

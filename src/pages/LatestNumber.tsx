@@ -14,7 +14,7 @@ function GetLatestNumber() {
 
   const fetchNextNumber = async () => {
     try {
-      const q = query(collection(db, "conters"), where(documentId(), "==", "member_number"));
+      const q = query(collection(db, 'counters'), where(documentId(), '==', 'member_number'));
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
@@ -65,7 +65,7 @@ function GetLatestNumber() {
     setIsLoading(true);
 
     try {
-      const counterRef = doc(db, "conters", "member_number");
+      const counterRef = doc(db, 'counters', 'member_number');
 
       await runTransaction(db, async (transaction) => {
         const counterDoc = await transaction.get(counterRef);
@@ -97,6 +97,7 @@ function GetLatestNumber() {
 
   return (
     <div className="latest-container">
+      <h2>最新会員番号</h2>
       <div className="number-display">
         <div className="number-item">
           <h2 className="number-title">割り当てる会員番号:</h2>
