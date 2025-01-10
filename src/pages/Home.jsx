@@ -43,7 +43,7 @@ export const Home = () => {
             <button type="button" className="felica-button" onClick={connectUSBDevice}>FelicaReaderに接続</button>
             <Search />
             <Register />
-            {/* <Latest /> */}
+            <Latest />
         </div>
     );
 };
