@@ -29,7 +29,7 @@ body {
 
 .button-container {
   display: flex; /* Flexboxを使用 */
-  gap: 10px;     /* ボタンの間隔を設定 */
+  gap: 10px; /* ボタンの間隔を設定 */
 }
 
 .input-field {
