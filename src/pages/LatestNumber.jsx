@@ -93,6 +93,7 @@ function GetLatestNumber() {
 
   return (
     <div className="latest-container">
+      <h1>最新会員番号</h1>
       <div className="number-display">
         <div className="number-item">
           <h2 className="number-title">割り当てる会員番号:</h2>
