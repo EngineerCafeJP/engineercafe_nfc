@@ -109,7 +109,7 @@ function RegisterNFC() {
 
   return (
     <div className="register-container">
-      <h1>NFC登録・更新</h1>
+      <h2>NFC登録・更新</h2>
       <form className="register-form">
         <div className="form-group">
           <label htmlFor="nfc-id">NFC ID:</label>
