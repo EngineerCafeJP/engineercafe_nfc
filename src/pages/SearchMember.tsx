@@ -10,23 +10,25 @@ function SearchMember() {
   const { nfcId, setNfcId, nfc } = useContext(NfcContext)!;
 
   const handleSearch = async () => {
-    const q = query(collection(db, "nfc"), where("nfc_id", "==", nfcId));
-    const querySnapshot = await getDocs(q);
-    if (!querySnapshot.empty) {
-      const doc = querySnapshot.docs[0];
-      setNumber(doc.data().number);
-      await copyClipboard(doc.data().number);
-    } else {
-      alert("会員が見つかりません");
-      await nfc.connectUSBDevice();
-      await nfc.session();
+    try {
+      const q = query(collection(db, "nfc"), where("nfc_id", "==", nfcId));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0];
+        setNumber(doc.data().number);
+        await copyClipboard(doc.data().number);
+      } else {
+        alert("会員が見つかりません");
+      }
+    } catch (error) {
+      console.error("検索中にエラーが発生しました:", error);
+      alert("検索中にエラーが発生しました");
     }
-    await nfc.connectUSBDevice();
-    await nfc.session();
   };
 
   const handleFormClear = () => {
     setNfcId("");
+    setNumber("");
   };
 
   const copyClipboard = async (numberToCopy: string) => {
