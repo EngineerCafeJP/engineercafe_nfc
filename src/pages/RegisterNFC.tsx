@@ -23,7 +23,6 @@ function RegisterNFC() {
     if (!number.trim() || !nfcId.trim()) {
       alert("NFC ID または会員番号が無効です");
       await nfc.connectUSBDevice();
-      await nfc.session();
       return;
     }
 
@@ -34,7 +33,6 @@ function RegisterNFC() {
 
     if (!isConfirmed) {
       await nfc.connectUSBDevice();
-      await nfc.session();
       return;
     }
 
@@ -56,10 +54,8 @@ function RegisterNFC() {
       console.error("エラーが発生しました: ", error);
       alert(`登録中にエラーが発生しました: ${error.message}`);
       await nfc.connectUSBDevice();
-      await nfc.session();
     } finally {
       await nfc.connectUSBDevice();
-      await nfc.session();
     }
   };
 
@@ -69,7 +65,6 @@ function RegisterNFC() {
     if (!number.trim() || !nfcId.trim()) {
       alert("NFC ID または会員番号が無効です");
       await nfc.connectUSBDevice();
-      await nfc.session();
       return;
     }
 
@@ -80,7 +75,6 @@ function RegisterNFC() {
 
     if (!isConfirmed) {
       await nfc.connectUSBDevice();
-      await nfc.session();
       return;
     }
 
@@ -106,7 +100,6 @@ function RegisterNFC() {
       alert(`上書き中にエラーが発生しました: ${error.message}`);
     } finally {
       await nfc.connectUSBDevice();
-      await nfc.session();
     }
   };
 

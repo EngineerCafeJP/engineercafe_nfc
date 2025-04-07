@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { NfcContext } from "../contexts/NfcContext";
 import "../styles/Home.css";
 import Latest from "./LatestNumber";
@@ -8,16 +8,18 @@ import Search from "./SearchMember";
 export const Home = () => {
   const { nfcId, setNfcId, nfc } = useContext(NfcContext)!;
   const [isPolling, setIsPolling] = useState(false);
+  const pollingRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
 
   const getCardId = async () => {
-    if (isPolling) return;
+    if (pollingRef.current) return;
     
     setIsPolling(true);
+    pollingRef.current = true;
     setError(null);
     
     try {
-      while (isPolling) {
+      while (pollingRef.current) {
         const id = await nfc.readCard();
         if (id) {
           setNfcId(id);
@@ -31,6 +33,7 @@ export const Home = () => {
     } catch (e) {
       console.error("カード検出中にエラーが発生:", e);
       setError(e instanceof Error ? e.message : String(e));
+      pollingRef.current = false;
       setIsPolling(false);
     }
   };
@@ -66,7 +69,7 @@ export const Home = () => {
         onClick={connectUSBDevice}
         disabled={isPolling}
       >
-        {isPolling ? "FelicaReaderに接続中..." : "FelicaReaderに接続"}
+        {isPolling ? "FelicaReaderに接続完了" : "FelicaReaderに接続"}
       </button>
       {error && <div className="error-message">{error}</div>}
       <Search />
