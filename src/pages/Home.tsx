@@ -1,39 +1,61 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { NfcContext } from "../contexts/NfcContext";
 import "../styles/Home.css";
+import Latest from "./LatestNumber";
 import Register from "./RegisterNFC";
 import Search from "./SearchMember";
-import Latest from "./LatestNumber";
 
 export const Home = () => {
   const { nfcId, setNfcId, nfc } = useContext(NfcContext)!;
+  const [isPolling, setIsPolling] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const getCardId = async () => {
+    if (isPolling) return;
+    
+    setIsPolling(true);
+    setError(null);
+    
     try {
-      do {
-        await nfc.connectUSBDevice();
-        const id = await nfc.session();
+      while (isPolling) {
+        const id = await nfc.readCard();
         if (id) {
           setNfcId(id);
+          // カードを検出したら少し待機してから次のポーリングを開始
+          await nfc.sleep(500);
+        } else {
+          // カードが検出されなかった場合は短い間隔で再試行
+          await nfc.sleep(100);
         }
-        await nfc.sleep(100);
-      } while (true);
-    } catch (e) {
-      console.log(e);
-      alert(e);
-      try {
-        nfc.close();
-      } catch (e) {
-        console.log(e);
       }
-      throw e;
+    } catch (e) {
+      console.error("カード検出中にエラーが発生:", e);
+      setError(e instanceof Error ? e.message : String(e));
+      setIsPolling(false);
     }
   };
 
   const connectUSBDevice = async () => {
-    await nfc.connectUSBDevice();
-    getCardId();
+    try {
+      setError(null);
+      await nfc.connectUSBDevice();
+      setIsPolling(true);
+      getCardId();
+    } catch (e) {
+      console.error("NFCリーダーの接続に失敗:", e);
+      setError(e instanceof Error ? e.message : String(e));
+      setIsPolling(false);
+    }
   };
+
+  // コンポーネントのアンマウント時にNFCリーダーを切断
+  useEffect(() => {
+    return () => {
+      if (nfc) {
+        nfc.disconnect().catch(console.error);
+      }
+    };
+  }, [nfc]);
 
   return (
     <div className="home-container">
@@ -42,9 +64,11 @@ export const Home = () => {
         type="button"
         className="felica-button"
         onClick={connectUSBDevice}
+        disabled={isPolling}
       >
-        FelicaReaderに接続
+        {isPolling ? "FelicaReaderに接続中..." : "FelicaReaderに接続"}
       </button>
+      {error && <div className="error-message">{error}</div>}
       <Search />
       <Register />
       <Latest />

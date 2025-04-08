@@ -15,7 +15,7 @@ interface NfcProviderProps {
 
 export const NfcProvider: FC<NfcProviderProps> = ({ children }) => {
   const [nfcId, setNfcId] = useState("");
-  const [nfc, setNfc] = useState(new NFC());
+  const [nfc, setNfc] = useState(new NFC(true));
 
   return (
     <NfcContext.Provider value={{ nfcId, setNfcId, nfc }}>
